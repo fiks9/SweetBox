@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Оформлення замовлення - SweetBox">
+    <title>Оформлення замовлення - SweetBox</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+            rel="stylesheet">
+    </noscript>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/new-styles.css">
+</head>
+
+<body>
+    <header id="site-header" class="header"></header>
+
+    <main class="main">
+        <section class="order-page">
+            <div class="container">
+                <h1 class="order-title">Оформлення замовлення</h1>
+
+                <div class="order-content">
+                    <!-- Товари -->
+                    <div class="order-items animate-on-scroll">
+                        <h2 class="order-subtitle">Ваше замовлення</h2>
+                        <div class="order-list" id="order-items-list">
+                            <!-- Заповнюється JavaScript -->
+                        </div>
+                        <div class="order-total-block">
+                            <span class="order-total-label">Разом:</span>
+                            <span class="order-total-value" id="order-total">0 ₴</span>
+                        </div>
+                    </div>
+
+                    <!-- Форма -->
+                    <div class="order-form-wrapper animate-on-scroll">
+                        <h2 class="order-subtitle">Дані для доставки</h2>
+                        <form class="order-form" id="order-form">
+                            <div class="form-group">
+                                <label class="form-label">Ім'я та прізвище *</label>
+                                <input type="text" class="form-input" id="order-name" required
+                                    placeholder="Олена Петренко">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Телефон *</label>
+                                <input type="tel" class="form-input" id="order-phone" required
+                                    placeholder="+380 ХХ ХХХ ХХ ХХ" pattern="^\+?[0-9\s\-]{10,15}$"
+                                    title="Введіть коректний номер телефону">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="order-email" placeholder="email@example.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Спосіб доставки *</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="delivery" value="nova-poshta" required>
+                                        <span class="radio-text">Нова Пошта (від 50 ₴)</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="delivery" value="courier">
+                                        <span class="radio-text">Кур'єр по Львову (150 ₴)</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="delivery" value="pickup">
+                                        <span class="radio-text">Самовивіз (безкоштовно)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Адреса доставки</label>
+                                <input type="text" class="form-input" id="order-address"
+                                    placeholder="Місто, вулиця, будинок, квартира">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Спосіб оплати *</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="payment" value="cash" required>
+                                        <span class="radio-text">Готівка при отриманні</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="payment" value="card">
+                                        <span class="radio-text">Оплата карткою онлайн</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Коментар до замовлення</label>
+                                <textarea class="form-textarea" id="order-comment"
+                                    placeholder="Будь-які побажання..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="radio-label" style="cursor: pointer;">
+                                    <input type="checkbox" id="gift-card">
+                                    <span class="radio-text">🎁 Додати подарункову листівку (безкоштовно)</span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn--primary btn--full" id="submit-order-btn">
+                                Підтвердити замовлення
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="site-footer" class="footer"></footer>
+
+    <!-- Success Modal (специфічна для order page) -->
+    <div id="success-overlay" class="modal-overlay"></div>
+    <div id="success-modal" class="modal modal--success">
+        <div class="modal__content" style="text-align: center;">
+            <div class="success-icon">✓</div>
+            <h3 class="modal__title">Замовлення прийнято!</h3>
+            <p class="modal__text">Дякуємо за замовлення! Наш менеджер зв'яжеться з вами для підтвердження.</p>
+            <p class="modal__text--small">Перенаправлення на головну через <span id="countdown">5</span> сек...</p>
+        </div>
+    </div>
+
+    <div id="site-modals"></div>
+
+    <script src="js/components.js"></script>
+    <script src="js/products-data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // ===========================
+        //  СТОРІНКА ЗАМОВЛЕННЯ
+        // ===========================
+
+        (function () {
+            loadOrderItems();
+
+            const form = document.getElementById('order-form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    submitOrder();
+                });
+            }
+        })();
+
+        function loadOrderItems() {
+            const orderItemsList = document.getElementById('order-items-list');
+            const orderTotalElement = document.getElementById('order-total');
+
+            let savedCart;
+            try {
+                savedCart = JSON.parse(localStorage.getItem('sweetboxCart'));
+            } catch (e) {
+                savedCart = null;
+            }
+
+            if (!savedCart || savedCart.length === 0) {
+                orderItemsList.innerHTML = '<p class="order-empty">Ваш кошик порожній. <a href="index.html">Повернутися до каталогу</a></p>';
+                const submitBtn = document.getElementById('submit-order-btn');
+                if (submitBtn) submitBtn.disabled = true;
+                return;
+            }
+
+            orderItemsList.innerHTML = '';
+            let total = 0;
+
+            savedCart.forEach(item => {
+                const price = parseFloat(item.price.replace(/[^\d.]/g, ''));
+                const itemTotal = price * item.quantity;
+                total += itemTotal;
+
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                orderItem.innerHTML = `
+                    <div class="order-item__info">
+                        <span class="order-item__name">${item.name}</span>
+                        <span class="order-item__quantity">× ${item.quantity}</span>
+                    </div>
+                    <span class="order-item__price">${itemTotal.toFixed(0)} ₴</span>`;
+                orderItemsList.appendChild(orderItem);
+            });
+
+            orderTotalElement.textContent = `${total.toFixed(0)} ₴`;
+        }
+
+        function submitOrder() {
+            const orderData = {
+                name: document.getElementById('order-name').value,
+                phone: document.getElementById('order-phone').value,
+                email: document.getElementById('order-email').value,
+                delivery: document.querySelector('input[name="delivery"]:checked')?.value,
+                address: document.getElementById('order-address').value,
+                payment: document.querySelector('input[name="payment"]:checked')?.value,
+                comment: document.getElementById('order-comment').value,
+                giftCard: document.getElementById('gift-card').checked,
+                items: JSON.parse(localStorage.getItem('sweetboxCart') || '[]')
+            };
+
+            console.log('Замовлення:', orderData);
+
+            // Очищаємо кошик
+            localStorage.removeItem('sweetboxCart');
+            localStorage.removeItem('sweetboxCartCount');
+
+            // Показуємо модалку успіху
+            const modal = document.getElementById('success-modal');
+            const overlay = document.getElementById('success-overlay');
+            if (modal) modal.classList.add('show');
+            if (overlay) overlay.classList.add('show');
+
+            // Countdown та redirect
+            let seconds = 5;
+            const countdownEl = document.getElementById('countdown');
+            const timer = setInterval(() => {
+                seconds--;
+                if (countdownEl) countdownEl.textContent = seconds;
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    window.location.href = 'index.html';
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>

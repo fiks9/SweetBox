@@ -1,0 +1,34 @@
+# ===========================
+#  SweetBox — .gitignore
+# ===========================
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node (if added later)
+node_modules/
+
+# Build output (if added later)
+dist/
+build/
+
+# Environment files (safety net)
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.bak
+*.swp

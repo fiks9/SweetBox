@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SweetBox - авторські торти та цукерки">
+    <title>Товар - SweetBox</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+            rel="stylesheet">
+    </noscript>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/new-styles.css">
+    <link rel="stylesheet" href="css/product-page.css">
+</head>
+
+<body>
+    <header id="site-header" class="header"></header>
+
+    <main class="main">
+        <section class="product-page">
+            <div class="container">
+                <div class="product-detail animate-on-scroll">
+                    <!-- Фото товару -->
+                    <div class="product-gallery">
+                        <div class="product-gallery__main">
+                            <img id="main-image" src="" alt="" loading="lazy">
+                        </div>
+                    </div>
+
+                    <!-- Інформація -->
+                    <div class="product-info">
+                        <span class="product-info__badge" style="display: none;"></span>
+                        <h1 class="product-info__title">Завантаження...</h1>
+                        <div class="product-info__price">—</div>
+                        <p class="product-info__price-per-unit"></p>
+                        <p class="product-info__description"></p>
+
+                        <div class="product-quantity">
+                            <span class="product-quantity__label">Кількість:</span>
+                            <div class="product-quantity__controls">
+                                <button class="product-quantity__btn" id="qty-minus">−</button>
+                                <span class="product-quantity__value" id="qty-value">1</span>
+                                <button class="product-quantity__btn" id="qty-plus">+</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn--primary product-add-btn" id="add-to-cart-btn">
+                            Додати до кошика
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Табси -->
+                <div class="product-tabs animate-on-scroll">
+                    <div class="product-tabs__nav">
+                        <button class="product-tabs__btn active" data-tab="description">Опис</button>
+                        <button class="product-tabs__btn" data-tab="ingredients">Склад</button>
+                        <button class="product-tabs__btn" data-tab="nutrition">Харчова цінність</button>
+                    </div>
+                    <div id="tab-description" class="product-tabs__content active">
+                        <h3>Детальний опис</h3>
+                        <p></p>
+                    </div>
+                    <div id="tab-ingredients" class="product-tabs__content">
+                        <h3>Склад</h3>
+                        <ul></ul>
+                    </div>
+                    <div id="tab-nutrition" class="product-tabs__content">
+                        <h3>Харчова цінність (на 100г)</h3>
+                        <table class="nutrition-table"></table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Схожі товари (fix 4.6: динамічні) -->
+        <section class="similar-products">
+            <div class="container">
+                <h2 class="section__title">Вам також сподобається</h2>
+                <div class="products" id="similar-products-container">
+                    <!-- Заповнюється динамічно -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="site-footer" class="footer"></footer>
+    <div id="site-modals"></div>
+
+    <script src="js/components.js"></script>
+    <script src="js/products-data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // ===========================
+        //  СТОРІНКА ТОВАРУ
+        //  Динамічне завантаження + схожі товари (fix 4.6)
+        // ===========================
+
+        (function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = parseInt(urlParams.get('id'));
+
+            if (!productId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const product = productsDatabase.find(p => p.id === productId);
+
+            if (!product) {
+                alert('Товар не знайдено');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // --- Заповнення даних ---
+            document.title = `${product.name} - SweetBox`;
+            document.getElementById('main-image').src = product.image;
+            document.getElementById('main-image').alt = product.name;
+
+            const badgeEl = document.querySelector('.product-info__badge');
+            if (product.badge) {
+                badgeEl.textContent = product.badge;
+                badgeEl.className = `product-info__badge ${product.badgeClass || ''}`;
+                badgeEl.style.display = 'inline-block';
+            }
+
+            document.querySelector('.product-info__title').textContent = product.name;
+            document.querySelector('.product-info__price').textContent = `${product.price} ₴`;
+            document.querySelector('.product-info__price-per-unit').textContent = product.pricePerUnit;
+            document.querySelector('.product-info__description').textContent = product.description;
+            document.querySelector('#tab-description p').textContent = product.description;
+
+            const ingredientsList = document.querySelector('#tab-ingredients ul');
+            ingredientsList.innerHTML = '';
+            product.ingredients.forEach(ing => {
+                const li = document.createElement('li');
+                li.textContent = ing;
+                ingredientsList.appendChild(li);
+            });
+
+            const nutritionTable = document.querySelector('.nutrition-table');
+            nutritionTable.innerHTML = `
+                <tr><td>Калорійність</td><td>${product.nutrition.calories}</td></tr>
+                <tr><td>Білки</td><td>${product.nutrition.protein}</td></tr>
+                <tr><td>Жири</td><td>${product.nutrition.fat}</td></tr>
+                <tr><td>Вуглеводи</td><td>${product.nutrition.carbs}</td></tr>`;
+
+            // --- Табси ---
+            document.querySelectorAll('.product-tabs__btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelector('.product-tabs__btn.active').classList.remove('active');
+                    document.querySelector('.product-tabs__content.active').classList.remove('active');
+                    btn.classList.add('active');
+                    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+                });
+            });
+
+            // --- Кількість ---
+            let qty = 1;
+            const qtyValue = document.getElementById('qty-value');
+            document.getElementById('qty-minus').addEventListener('click', () => {
+                if (qty > 1) { qty--; qtyValue.textContent = qty; }
+            });
+            document.getElementById('qty-plus').addEventListener('click', () => {
+                qty++;
+                qtyValue.textContent = qty;
+            });
+
+            // --- Додати до кошика ---
+            document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+                for (let i = 0; i < qty; i++) {
+                    addToCart(product.name, `${product.price} ₴`);
+                }
+                showModal();
+            });
+
+            // --- Схожі товари (fix 4.6: динамічні) ---
+            renderSimilarProducts(product);
+        })();
+
+        /**
+         * Генерує секцію "Схожі товари" динамічно
+         * @param {Object} currentProduct
+         */
+        function renderSimilarProducts(currentProduct) {
+            const container = document.getElementById('similar-products-container');
+            if (!container) return;
+
+            // Знаходимо товари тієї ж категорії, крім поточного
+            let similar = productsDatabase.filter(p =>
+                p.id !== currentProduct.id && p.category === currentProduct.category
+            );
+
+            // Якщо мало — додаємо інші товари
+            if (similar.length < 4) {
+                const others = productsDatabase.filter(p =>
+                    p.id !== currentProduct.id && p.category !== currentProduct.category
+                );
+                // Перемішуємо
+                others.sort(() => Math.random() - 0.5);
+                similar = similar.concat(others).slice(0, 4);
+            } else {
+                similar.sort(() => Math.random() - 0.5);
+                similar = similar.slice(0, 4);
+            }
+
+            container.innerHTML = '';
+
+            similar.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product animate-on-scroll';
+
+                const badgeHTML = p.badge
+                    ? `<span class="product__badge ${p.badgeClass || ''}">${p.badge}</span>`
+                    : '';
+
+                card.innerHTML = `
+                    ${badgeHTML}
+                    <a href="product.html?id=${p.id}" class="product__link">
+                        <div class="product__image">
+                            <img src="${p.image}" alt="${p.name}" loading="lazy">
+                        </div>
+                        <h3 class="product__title">${p.name}</h3>
+                        <p class="product__price">${p.price} ₴</p>
+                    </a>
+                    <button class="btn btn--small" data-product-id="${p.id}">Купити</button>`;
+
+                container.appendChild(card);
+            });
+
+            // Прив'язуємо кнопки
+            attachBuyButtonHandlers();
+            // Запускаємо анімації для нових елементів
+            initScrollAnimations();
+        }
+    </script>
+</body>
+
+</html>

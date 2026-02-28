@@ -14,7 +14,7 @@
 
 [![Preview](assets/preview.png)](https://fiks9.github.io/SweetBox/)
 
-> 🌐 **[Переглянути живий сайт](https://fiks9.github.io/SweetBox/)**
+🌐 **[Переглянути живий сайт](https://fiks9.github.io/SweetBox/)**
 
 </div>
 

@@ -1,4 +1,4 @@
-﻿/* --- Змінні та Reset --- */
+/* --- Змінні та Reset --- */
 
 :root {
     /* Кольори */
@@ -781,6 +781,7 @@ button {
     flex-direction: column;
     width: 100%;
     margin-top: 16px;
+    gap: 12px;
 }
 
 .modal__actions .btn {
